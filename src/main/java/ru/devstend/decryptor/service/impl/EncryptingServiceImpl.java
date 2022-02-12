@@ -46,14 +46,14 @@ public class EncryptingServiceImpl implements EncryptingService {
             throw new DecryptException("Encrypt error", ex);
           }
         })
-        .map(this::encryptBase64)
+        .map(this::encodeBase64)
         .map(encrDataBase64 -> EncryptedDataDto.builder()
             .messageId(request.getMessageId())
             .encryptedData(encrDataBase64)
             .build());
   }
 
-  private String encryptBase64(String encryptMessage) {
+  private String encodeBase64(String encryptMessage) {
     return Base64.encodeBase64String(
         encryptMessage.getBytes(StandardCharsets.UTF_8)
     );

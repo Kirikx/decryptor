@@ -32,7 +32,7 @@ public class DecryptingServiceImpl implements DecryptingService {
   public Mono<DecryptedDataDto> decryptData(EncryptedDataDto request) {
 
     return Mono.just(request)
-        .map(this::decodeEncryptData)
+        .map(this::decodeBase64)
         .map(encrData -> {
           try {
             return unsealMessage(encrData);
@@ -62,7 +62,7 @@ public class DecryptingServiceImpl implements DecryptingService {
         .unseal(decodeEncryptData);
   }
 
-  private String decodeEncryptData(EncryptedDataDto request) {
+  private String decodeBase64(EncryptedDataDto request) {
     return new String(Base64.decodeBase64(
         request.getEncryptedData()
     ));
