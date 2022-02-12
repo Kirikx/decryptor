@@ -27,6 +27,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     implementation 'com.google.crypto.tink:apps-paymentmethodtoken:1.6.1'
 

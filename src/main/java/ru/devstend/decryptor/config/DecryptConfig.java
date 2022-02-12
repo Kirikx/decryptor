@@ -1,6 +1,5 @@
 package ru.devstend.decryptor.config;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
