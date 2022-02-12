@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "encrypt")
 public class EncryptConfig {
 
-    private String recipientId;
-    private String merchantPublicKey;
-    private String signingEcV1PrivateKey;
+  private String recipientId;
+  private String merchantPublicKey;
+  private String signingEcV1PrivateKey;
 
 }

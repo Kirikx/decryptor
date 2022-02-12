@@ -34,15 +34,9 @@ public class EncryptingServiceImpl implements EncryptingService {
     try {
       PaymentMethodTokenSender sender =
           new PaymentMethodTokenSender.Builder()
-              .senderSigningKey(
-                  config.getSigningEcV1PrivateKey()
-              ) // GOOGLE_SIGNING_EC_V1_PRIVATE_KEY_PKCS8_BASE64
-              .recipientId(
-                  config.getRecipientId()
-              ) // RECIPIENT_ID
-              .rawUncompressedRecipientPublicKey(
-                  config.getMerchantPublicKey()
-              ) // MERCHANT_PUBLIC_KEY_BASE64
+              .senderSigningKey(config.getSigningEcV1PrivateKey())
+              .recipientId(config.getRecipientId())
+              .rawUncompressedRecipientPublicKey(config.getMerchantPublicKey())
               .build();
 
       encryptMessage = sender.seal(request.getMessage());
@@ -52,7 +46,8 @@ public class EncryptingServiceImpl implements EncryptingService {
       throw new DecryptException("Encrypt error", ex);
     }
 
-    String messageBase64 = Base64.encodeBase64String(encryptMessage.getBytes(StandardCharsets.UTF_8));
+    String messageBase64 = Base64.encodeBase64String(
+        encryptMessage.getBytes(StandardCharsets.UTF_8));
 
     return EncryptedDataDto.builder()
         .messageId(request.getMessageId())

@@ -1,7 +1,6 @@
 package ru.devstend.decryptor.service.impl;
 
 import com.google.crypto.tink.apps.paymentmethodtoken.PaymentMethodTokenRecipient;
-import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,18 +37,10 @@ public class DecryptingServiceImpl implements DecryptingService {
     try {
       PaymentMethodTokenRecipient recipient =
           new PaymentMethodTokenRecipient.Builder()
-              .senderVerifyingKeys(
-                  config.getVerifyingPublicKeysJson()
-              ) // GOOGLE_VERIFYING_PUBLIC_KEYS_JSON
-              .recipientId(
-                  config.getRecipientId()
-              ) // RECIPIENT_ID
-              .addRecipientPrivateKey(
-                  config.getAlternateMerchantPrivateKey()
-              ) // ALTERNATE_MERCHANT_PRIVATE_KEY_PKCS8_BASE64
-              .addRecipientPrivateKey(
-                  config.getMerchantPrivateKey()
-              ) // MERCHANT_PRIVATE_KEY_PKCS8_BASE64
+              .senderVerifyingKeys(config.getVerifyingPublicKeysJson())
+              .recipientId(config.getRecipientId())
+              .addRecipientPrivateKey(config.getAlternateMerchantPrivateKey())
+              .addRecipientPrivateKey(config.getMerchantPrivateKey())
               .build();
 
       decryptedMessage = recipient.unseal(decodeEncryptData);
