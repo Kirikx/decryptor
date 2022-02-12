@@ -19,10 +19,11 @@ public class DecryptController {
   private final DecryptingService decryptingService;
 
   @PostMapping
-  public Mono<ResponseEntity<DecryptedDataDto>> decryptMessage(@RequestBody EncryptedDataDto request) {
+  public Mono<ResponseEntity<DecryptedDataDto>> decryptMessage(
+      @RequestBody EncryptedDataDto request) {
 
     return decryptingService.decryptData(request)
-            .map(ResponseEntity::ok);
+        .map(ResponseEntity::ok);
   }
 
 }

@@ -1,6 +1,6 @@
 package ru.devstend.decryptor.exception;
 
-public class DecryptException extends RuntimeException{
+public class DecryptException extends RuntimeException {
 
   public DecryptException(Throwable cause) {
     super(cause);
