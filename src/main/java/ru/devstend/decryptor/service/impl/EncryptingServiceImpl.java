@@ -2,12 +2,14 @@ package ru.devstend.decryptor.service.impl;
 
 import com.google.crypto.tink.apps.paymentmethodtoken.PaymentMethodTokenSender;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.devstend.decryptor.config.EncryptConfig;
 import ru.devstend.decryptor.dto.EncryptedDataDto;
 import ru.devstend.decryptor.dto.PayDataDto;
@@ -28,36 +30,41 @@ public class EncryptingServiceImpl implements EncryptingService {
   }
 
   @Override
-  public EncryptedDataDto encryptData(PayDataDto request) {
+  public Mono<EncryptedDataDto> encryptData(PayDataDto request) {
 
-    String encryptMessage;
-    try {
-      PaymentMethodTokenSender sender =
-          new PaymentMethodTokenSender.Builder()
-              .senderSigningKey(
-                  config.getSigningEcV1PrivateKey()
-              ) // GOOGLE_SIGNING_EC_V1_PRIVATE_KEY_PKCS8_BASE64
-              .recipientId(
-                  config.getRecipientId()
-              ) // RECIPIENT_ID
-              .rawUncompressedRecipientPublicKey(
-                  config.getMerchantPublicKey()
-              ) // MERCHANT_PUBLIC_KEY_BASE64
-              .build();
+    return Mono.just(request)
+        .map(req -> {
+          try {
+            return sealData(req);
+          } catch (GeneralSecurityException ex) {
+            log.error("Error build sender");
 
-      encryptMessage = sender.seal(request.getMessage());
-    } catch (Exception ex) {
-      log.error("Error encrypt message");
+            throw new DecryptException("Encrypt error", ex);
+          } catch (Exception ex) {
+            log.error("Error encrypt message");
 
-      throw new DecryptException("Encrypt error", ex);
-    }
+            throw new DecryptException("Encrypt error", ex);
+          }
+        })
+        .map(this::encryptBase64)
+        .map(encrDataBase64 -> EncryptedDataDto.builder()
+            .messageId(request.getMessageId())
+            .encryptedData(encrDataBase64)
+            .build());
+  }
 
-    String messageBase64 = Base64.encodeBase64String(encryptMessage.getBytes(StandardCharsets.UTF_8));
+  private String encryptBase64(String encryptMessage) {
+    return Base64.encodeBase64String(
+        encryptMessage.getBytes(StandardCharsets.UTF_8)
+    );
+  }
 
-    return EncryptedDataDto.builder()
-        .messageId(request.getMessageId())
-        .encryptedData(messageBase64)
-        .build();
-
+  private String sealData(PayDataDto request) throws GeneralSecurityException {
+    return new PaymentMethodTokenSender.Builder()
+        .senderSigningKey(config.getSigningEcV1PrivateKey())
+        .recipientId(config.getRecipientId())
+        .rawUncompressedRecipientPublicKey(config.getMerchantPublicKey())
+        .build()
+        .seal(request.getMessage());
   }
 }

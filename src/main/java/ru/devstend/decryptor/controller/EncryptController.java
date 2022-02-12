@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 import ru.devstend.decryptor.dto.EncryptedDataDto;
 import ru.devstend.decryptor.dto.PayDataDto;
 import ru.devstend.decryptor.service.EncryptingService;
@@ -18,11 +19,10 @@ public class EncryptController {
   private final EncryptingService encryptingService;
 
   @PostMapping
-  ResponseEntity<EncryptedDataDto> encryptMessage(@RequestBody PayDataDto request) {
+  public Mono<ResponseEntity<EncryptedDataDto>> encryptMessage(@RequestBody PayDataDto request) {
 
-    return ResponseEntity.ok(
-        encryptingService.encryptData(request)
-    );
+    return encryptingService.encryptData(request)
+        .map(ResponseEntity::ok);
   }
 
 }
