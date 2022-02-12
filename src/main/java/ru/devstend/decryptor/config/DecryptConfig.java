@@ -1,5 +1,6 @@
 package ru.devstend.decryptor.config;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,13 +48,19 @@ public class DecryptConfig {
     private String alternateMerchantPrivateKey;
 
     public void setVerifyingPublicKeysJson(String verifyingPublicKeysJson) {
-//        System.out.println("TEST");
-//        System.out.println(new String(Base64.encodeBase64(GOOGLE_VERIFYING_PUBLIC_KEYS_JSON.getBytes(StandardCharsets.UTF_8))));
-        this.verifyingPublicKeysJson = Optional.ofNullable(verifyingPublicKeysJson)
-            .filter(StringUtils::isNoneBlank)
-            .filter(Base64::isBase64)
-            .map(Base64::decodeBase64)
-            .map(String::new)
-            .orElseThrow(() -> new RuntimeException("VerifyingPublicKeysJson not decode Base64"));
+        if (StringUtils.isNoneBlank(verifyingPublicKeysJson)) {
+            this.verifyingPublicKeysJson = Optional.ofNullable(verifyingPublicKeysJson)
+                .filter(StringUtils::isNoneBlank)
+                .filter(Base64::isBase64)
+                .map(Base64::decodeBase64)
+                .map(String::new)
+                .orElseThrow(
+                    () -> new RuntimeException("VerifyingPublicKeysJson not decode Base64"));
+        } else {
+            this.verifyingPublicKeysJson = new String(
+                Base64.encodeBase64(
+                    GOOGLE_VERIFYING_PUBLIC_KEYS_JSON.getBytes(StandardCharsets.UTF_8)
+                ));
+        }
     }
 }
