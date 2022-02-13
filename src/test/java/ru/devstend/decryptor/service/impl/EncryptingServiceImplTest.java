@@ -17,11 +17,13 @@ import java.security.GeneralSecurityException;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Unit tests for {@code PaymentMethodTokenRecipient}.
  */
-//@RunWith(SpringExtension.class)
+@ExtendWith(SpringExtension.class)
 public class EncryptingServiceImplTest {
 
   /**
