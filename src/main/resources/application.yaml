@@ -1,3 +1,28 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: decryptor
+  profiles:
+    active: dev
+  main:
+    banner-mode: off
+  devtools:
+    add-properties: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metric
+  server:
+    port: 8085
+logging:
+  level:
+    .: INFO
+    org.springframework: INFO
+    ru.devstend: DEBUG
+
+# App prors
 recipientId: someRecipient
 
 encrypt:
